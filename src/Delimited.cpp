@@ -2,9 +2,9 @@
  *   G BRENT HURST
  *   Delimited.cpp
  *   December 21, 2017 (original)
- *   August 11, 2019 (last edit)
+ *   August 12, 2019 (last edit)
  *
- *   #include "iogbh.h"
+ *   #include "gbhio.h"
  *
  ************************************************/
 
@@ -16,38 +16,15 @@
 
 using namespace std;
 
-class Delimited
-{
-	protected:
-		int ReadAnotherWord();
-		void WriteAnotherChar(char c);
-		void WriteLine_internal(int index);
 
-		string filename;
-		FILE* f;
-		char word_delim;
-		char line_delim;
-		char escape_char;
-		string mode;
-		int error;
-
-	public:
-		int ReadLine();
-		void ReadFile();
-		void WriteLine();
-		void WriteFile();
-		void PrintError();
-		int Error();
-
-		vector<string> line;
-		vector<vector<string> > file;
-
-		Delimited(const string& fn, char m, char wd, char ld, char ec);
-		Delimited(const string& fn, char m);
-		~Delimited();
-};
-
-
+//Constructor
+//Parameters:
+//    fn - filename
+//    m - mode ['r' or 'w']
+//    wd - word delimiter
+//    ld - line delimiter
+//    ec - escape character
+//wd, ld, and wc must be distinct
 Delimited::Delimited(const string& fn, char m, char wd, char ld, char ec)
 {
 	error = 0;
@@ -71,6 +48,10 @@ Delimited::Delimited(const string& fn, char m, char wd, char ld, char ec)
 		error |= (1 << 2);
 }
 
+//Constructor
+//Parameters:
+//    fn - filename
+//    m - mode ['r' or 'w']
 Delimited::Delimited(const string& fn, char m)
 {
 	error = 0;
@@ -90,11 +71,14 @@ Delimited::Delimited(const string& fn, char m)
 	if(!(f = fopen(filename.c_str(),mode.c_str())))
 		error |= (1 << 2);
 }
+
+//Destructor
 Delimited::~Delimited()
 {
 	fclose(f);
 }
 
+//Print what the error is to stderr
 void Delimited::PrintError()
 {
 	if(error & (1 << 0))
@@ -105,13 +89,11 @@ void Delimited::PrintError()
 		fprintf(stderr,"Error 2: Could not open file \"%s\".\n",filename.c_str());
 }
 
+//Return the error code. 0 if no error. Print with PrintError().
 int Delimited::Error()
 {
 	return error;
 }
-
-
-
 
 //Reads a word from a file f into vector<string> line,
 //delimiting words with word_delim and lines with line_delim
@@ -193,6 +175,9 @@ void Delimited::WriteAnotherChar(char c)
 	fwrite(&c,sizeof(char),1,f);
 }
 
+//Internal function to write a line to a file.
+//If index is -1, write line.
+//Else, write file[index].
 void Delimited::WriteLine_internal(int index)
 {
 	unsigned int i,j;
@@ -216,11 +201,13 @@ void Delimited::WriteLine_internal(int index)
 	fwrite(&line_delim,sizeof(char),1,f);
 }
 
+//Public function to write "line" to file
 void Delimited::WriteLine()
 {
 	WriteLine_internal(-1);
 }
 
+//Public function to write "file" to file
 void Delimited::WriteFile()
 {
 	int i;

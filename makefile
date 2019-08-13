@@ -1,35 +1,39 @@
 # G BRENT HURST
-# makefile for gbhio.h
+# Makefile template for libraries
+
+
+
+OBJDIR = obj
+SRCDIR = src
+HEADERDIR = .
+LIBDIR = .
 
 CC = g++
 LANGUAGE = cpp
-CFLAGS = -Wall
-
-INCLUDEDIR = $(HOME)/include
-HEADERDIR = $(INCLUDEDIR)/headers
+CFLAGS = -Wall -Wextra -I$(LIBDIR)
 
 ########## EDIT BELOW HERE ##########
 
-NAME=gbhio
-
-# libLIBRARY.a
-LIBFILENAME = $(INCLUDEDIR)/lib$(NAME).a
-
-# .h file
-HEADER = $(HEADERDIR)/$(NAME).h
-
-# list all .o files
-OBJECTS = Delimited.o
+NAME = gbhio
 
 ########## EDIT ABOVE HERE ##########
+
+LIBFILENAME = $(LIBDIR)/lib$(NAME).a
+HEADERS = $(HEADERDIR)/$(NAME).h
+OBJECTS = $(patsubst $(SRCDIR)/%.$(LANGUAGE),$(OBJDIR)/%.o,$(wildcard $(SRCDIR)/*.$(LANGUAGE)))
+
 
 all: $(LIBFILENAME)
 
 $(LIBFILENAME): $(OBJECTS)
 	ar -vr $(LIBFILENAME) $(OBJECTS)
 
-%.o: %.$(LANGUAGE) $(HEADER)
-	$(CC) $(CFLAGS) -c $*.$(LANGUAGE)
+$(OBJDIR)/%.o: $(SRCDIR)/%.$(LANGUAGE) $(HEADERS) | $(OBJDIR)
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
 
 .PHONY: clean
 clean:

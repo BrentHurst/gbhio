@@ -2,23 +2,21 @@
  *   G BRENT HURST
  *   iogbh.h
  *   December 21, 2017 (original)
- *   December 27, 2017 (last edit)
+ *   August 12, 2019 (last edit)
  *
- *   Functions that perform specific io tasks.
+ *   I/O classes.
  *
  ************************************************/
 
 #ifndef IOGBH_H
 #define IOGBH_H
 
-//#include <cstdlib>
-//#include <string>
-//#include <vector>
-
 using namespace std;
 
 
 /*************************************************
+ *   class Delimited
+ *
  *   Read and write lines/files of data
  *   whose entries are delimited by c0
  *   and whose lines are delimited by c1.
@@ -26,29 +24,70 @@ using namespace std;
  *   The esc char allows the inclusion
  *   of the delimiters in the data.
  *
- *   If no row delimiter, pass -1 to c1.
- *   If no esc, pass -1 to esc.
- *
- *   FILE* f must be open. No error checks
- *   are performed.
- *   The vector isn't required to be empty
- *   when using GetLine or GetFile, but
- *   contents will be overwritten.
- *
- *   Uses the stl's buffered io.
- *
- *   Return Values
- *     int GetLine()
- *       0 if EOF or if error reading from f
- *       1 if end of line
- *
- *   Definitions in iogbhDelimitedLineFile.cpp
+ *   Uses the stl's buffered I/O.
  *
  ************************************************/
 
-int GetDelimitedLine(FILE* f,char c0,int c1,int esc,vector<string>& rv);
-void GetDelimitedFile(FILE* f,char c0,int c1,int esc,vector<vector<string> >& rv);
-void PutDelimitedLine(FILE* f,char c0,int c1,int esc,vector<string>& v);
-void PutDelimitedFile(FILE* f,char c0,int c1,int esc,vector<vector<string> >& v);
+class Delimited
+{
+	protected:
+		int ReadAnotherWord();
+		void WriteAnotherChar(char c);
+		void WriteLine_internal(int index);
+
+		string filename;
+		FILE* f;
+		char word_delim;
+		char line_delim;
+		char escape_char;
+		string mode;
+		int error;
+
+	public:
+		//Reads a line from file f into line,
+		//delimiting words with word_delim and lines with line_delim
+		//and allowing entries to contain word_delim or line_delim by escape_char.
+		//Returns
+		//  0 if EOF or if error reading from f,
+		//  1 if end of line
+		int ReadLine();
+
+		//Reads from a file f into file
+		//delimiting words with word_delim and lines with line_delim
+		//and allowing entries to contain word_delim or line_delim by escape_char.
+		void ReadFile();
+
+		//Public function to write "line" to file
+		void WriteLine();
+
+		//Public function to write "file" to file
+		void WriteFile();
+
+		//Print what the error is to stderr
+		void PrintError();
+
+		//Return the error code. 0 if no error. Print with PrintError().
+		int Error();
+
+
+
+		//ReadLine() stores in line, and WriteLine() writes out line
+		vector<string> line;
+		//ReadFile() stores in file, and WriteFile() writes out file
+		vector<vector<string> > file;
+
+
+		//Constructors and Destructor
+		//Parameters:
+		//    fn - filename
+		//    m - mode ['r' or 'w']
+		//    wd - word delimiter
+		//    ld - line delimiter
+		//    ec - escape character
+		//wd, ld, and wc must be distinct
+		Delimited(const string& fn, char m, char wd, char ld, char ec);
+		Delimited(const string& fn, char m);
+		~Delimited();
+};
 
 #endif
