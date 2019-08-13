@@ -1,5 +1,5 @@
 # G BRENT HURST
-# Makefile template for libraries
+# Makefile for gbhio
 
 
 
