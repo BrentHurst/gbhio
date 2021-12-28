@@ -1,3 +1,4 @@
 *.o
 *.a
-__pycache__
+__pycache__/
+tf/
