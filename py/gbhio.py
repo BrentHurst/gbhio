@@ -32,6 +32,7 @@ def strLineToList(line):
     l = line.split(',')
 
     for i,word in enumerate(l):
+        l[i] = l[i].strip()
         if replacestrcomma in l[i]:
             l[i] = l[i].replace(replacestrcomma,',')
         if '"' in l[i]:
@@ -72,7 +73,3 @@ def writeOutExcelCSV(fileout,csv):
         for line in csv:
             fout.write(listLineToStr(line))
             fout.write('\n')
-
-
-filein = 'students.csv'
-csv = readInExcelCSV(filein)
