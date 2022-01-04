@@ -36,7 +36,7 @@ def strLineToList(line):
         if replacestrcomma in l[i]:
             l[i] = l[i].replace(replacestrcomma,',')
         if '"' in l[i]:
-            if l[i][0] is not '"' or l[i][-1] is not '"':
+            if l[i][0] != '"' or l[i][-1] != '"':
                 print(l[i] + ' doesn\'t start and end with a " somehow?')
                 exit(1)
             else:
